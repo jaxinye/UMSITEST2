@@ -1,3 +1,6 @@
 [submodule "Python-100-Days"]
 	path = Python-100-Days
 	url = https://github.com/jaxinye/Python-100-Days.git
+[submodule "UMSITest"]
+	path = UMSITest
+	url = https://github.com/jaxinye/UMSITest.git
