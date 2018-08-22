@@ -1,0 +1,97 @@
+Directly added a file to the repository. => Push Event
+
+git branch child_1
+git push origin child_1 => One CreateEvent and one PushEvent. {2018-08-12 22:22:54}
+[The PushEvent's 'commits' field is empty, 'created' field is true, 'base_ref' is "refs/heads/master" which is the master branch the child pertaining to.]
+
+git add child1.py
+git commit -m "new file added to child_1 branch"
+git push origin child_1 => One PushEvent created. {2018-08-12 22:40:18}
+[The PushEvent's 'commits' field is not empty, comment is in 'commits'=>'message', 'created' field is false, 'base_ref' is null]
+
+git submodule add https://github.com/jaxinye/Python-100-Days.git
+git commit -m "added one submodule"
+git push origin child_1 => One PushEvent created.
+
+--PullRequestEvent--
+  *If the action is 'closed' and the 'merged' key is false, the pull request was closed with unmerged commits. If the action is 'closed' and the 'merged' key is true, the pull request was merged.
+
+  create a new pull request => PullRequestEvent
+  [action = 'opened', branch information in 'head' field]
+
+  Add/remove a label to the pull request => PullRequestEvent
+  [action = 'labeled'/'unlabeled', label information in 'label' field, 'label' field exists in this situation]
+
+  * comment on a pull request => IssueCommentEvent {2018-08-13 12:32:12}
+  [action='created', 'comment' field includes the content.]
+
+  Edit the pull request => PullRequestEvent. {2018-08-13 12:34:19}
+  [action = 'edited', 'body' field is the new version, 'changes' field represents the old one. ]
+
+  Assign/unassign the pull request to someone => PullRequestEvent {2018-08-13 12:36:51}
+  [action = 'assigned'/'unassigned', 'assignee' field shows the detailed information about the user.]
+
+  Close/Reopen one pull request => PullRequestEvent. {2018-08-13 12:41:29}
+  [action = 'closed'/'reopened']
+
+  Synchronized (updated due to a new push in the branch that the pull request is tracking). => PullRequestEvent
+  [action = 'synchronized']
+---------------------
+
+--PullRequestReviewEvent--
+  +---------------------------------------------------------------------------------+
+  |#Three type of review, comment, approve and change request.#                     |
+  |                                                                                 |
+  |*A review requesting changes made by a user with written/admin permission to     |
+  |the repository can be both approved or dismissed. It will open a conversation    |
+  |that opens to participants. Also, the people who came up with the change         |
+  |request could approve it later.                                                  |
+  |                                                                                 |
+  |*One can dismiss the review by repository owners and collaborators in the pull.  |
+  |request's merge box. There might be conflicts.                                   |
+  +---------------------------------------------------------------------------------+
+  Review the filed changed and leave a comment. {2018-08-13 12:50:47}
+  [action = 'submitted', 'body' contains the comment, 'review'->'state' is the type of review.]
+
+  Update the comment in the pull request review. {2018-08-13 12:56:18}
+  [action = 'edited', 'body' contains the new comment, 'changes'->'body' contains the old version]
+
+  One review is dismissed. {2018-08-13 14:12:55}
+  [action = 'dismissed', 'review'->'body' shows the reason why it is dismissed.]
+
+-------------------------
+--PullRequestReviewCommentEvent--
+
+* All the comment made on a review pertaining unified diff will trigger both PullRequestReviewEvent & PullRequestReviewCommentEvent.
+
+Simply Add comment on uinified diff. => PullRequestReviewCommentEvent {2018-08-13 14:52:40}
+[action = 'created', comment'->'body' shows the content.] (PullRequestReviewCommentEvent)
+[action = 'submitted', No comment included in this event] (PullRequestReviewEvent)
+
+Start a review on unified diff. => Both PullRequestReviewEvent & PullRequestReviewCommentEvent {2018-08-13 14:55:21}
+[action = 'created', comment'->'body' shows the content.] (PullRequestReviewCommentEvent)
+[action = 'submitted'] (PullRequestReviewEvent)
+[action = 'edited', Comment of the main review in 'review'-> 'body'] (PullRequestReviewEvent)
+
+--------------------------------
+--IssueEvent--
+
+create a issue => IssueEvent {2018-08-13 15:09:33}
+[action = 'opened']
+
+Actions of 'closed'/'reopened', 'assigned'/'unassigned', 'labeled'/'unlabeled', 'milstoned'/'unmilestoned' are trivial.
+--------------
+
+-IssueCommentEvent-
+leave a comment on an issue.
+[action = 'created']
+-------------------
+
+Merge the child branch to master branch. => PushEvent & DeleteEvent {2018-08-13 15:19:03}
+[ref = 'refs/heads/child_1'] (PushEvent)
+[ref = 'child_1'] (DeleteEvent)
+
+Make comment on a commit. {2018-08-13 15:25:42}
+[action = 'created', 'comment'->'body' holds the content.]
+
+Add one user to collaborator => MemberEvent {2018-08-13 13:21:17}
